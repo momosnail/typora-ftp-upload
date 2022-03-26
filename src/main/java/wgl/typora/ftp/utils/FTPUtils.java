@@ -8,6 +8,7 @@ import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.util.Calendar;
 
 public class FTPUtils {
     public static FTPClient ftpClient = null;
@@ -35,6 +36,7 @@ public class FTPUtils {
             //是否成功登录服务器
             int replyCode = ftpClient.getReplyCode();
             if (!FTPReply.isPositiveCompletion(replyCode)) {
+                System.out.println("replyCode:" + replyCode);
                 System.out.println("ftp服务器登录失败!");
             } else {
                 System.out.println("ftp服务器登录成功！");
@@ -112,7 +114,7 @@ public class FTPUtils {
      */
     private static String updatePath(String imageName) {
         categoryFolder = urlPath + "/";
-        if (imageName.contains("_")) {
+       /* if (imageName.contains("_")) {
             String[] strs = imageName.split("_");
             for (int i = 0; i < strs.length; i++) {
                 if (i != strs.length - 1) {
@@ -122,6 +124,31 @@ public class FTPUtils {
             }
             return strs[strs.length - 1];
         }
+        return imageName;*/
+
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = (calendar.get(Calendar.MONTH) + 1) % 12;
+        int date = calendar.get(Calendar.DATE);
+
+        String strMonth;
+        if (month<10){
+             strMonth="0"+month;
+        }else {
+            strMonth=""+month;
+        }
+
+        String strDate;
+        if (date<10){
+            strDate="0"+date;
+        }else {
+            strDate=""+date;
+        }
+
+        String folder = "" + year + "/" + strMonth + "/" + strDate;
+        path = path + "/"+folder;
+        categoryFolder = categoryFolder + folder + "/";
+
         return imageName;
     }
 

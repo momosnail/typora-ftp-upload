@@ -8,7 +8,7 @@ public class Main {
             return;
         }
         for (String arg : args) {
-//           String arg="C:\\Users\\55021\\Desktop\\photo.png";
+//           String arg="C:\\Users\\55021\\Desktop\\b.jpg";
             String hostImageUrl = FTPUtils.uploadFile(arg);
             System.out.println(hostImageUrl);
         }
