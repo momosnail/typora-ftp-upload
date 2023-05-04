@@ -4,14 +4,15 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
-        if (!checkArgs(args)) {
+      /*  if (!checkArgs(args)) {
             return;
-        }
-        for (String arg : args) {
+        }*/
+//        for (String arg : args) {
 //           String arg="C:\\Users\\55021\\Desktop\\b.jpg";
+           String arg="/home/wgl/图片/截图/1.png";
             String hostImageUrl = FTPUtils.uploadFile(arg);
             System.out.println(hostImageUrl);
-        }
+//        }
     }
 
     /**
