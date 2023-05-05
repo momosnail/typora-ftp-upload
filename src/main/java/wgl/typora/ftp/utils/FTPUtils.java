@@ -8,6 +8,9 @@ import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Calendar;
 
 public class FTPUtils {
@@ -75,7 +78,7 @@ public class FTPUtils {
             ftpClient.changeWorkingDirectory(path);
             ftpClient.setBufferSize(1024);
 
-            inputStream = new FileInputStream(loadUrl);
+            inputStream = Files.newInputStream(Paths.get(loadUrl));
             ftpClient.storeFile(imageName, inputStream);
             System.out.println("上传结束");
             inputStream.close();
@@ -102,8 +105,7 @@ public class FTPUtils {
                 }
             }
         }
-        String hostImgUrl = resultPath + "/" + categoryFolder + imageName;
-        return hostImgUrl;
+        return resultPath + "/" + categoryFolder + imageName;
     }
 
     /**
@@ -174,7 +176,7 @@ public class FTPUtils {
         String directory = remote + "/";
 
         // 如果远程目录不存在，则递归创建远程服务器目录
-        if (!directory.equalsIgnoreCase("/") && !changeWorkingDirectory(new String(directory))) {
+        if (!directory.equalsIgnoreCase("/") && !changeWorkingDirectory(directory)) {
             int start = 0;
             int end = 0;
             if (directory.startsWith("/")) {
@@ -184,11 +186,12 @@ public class FTPUtils {
             }
             end = directory.indexOf("/", start);
             String path = "";
-            String paths = "";
+            StringBuilder paths = new StringBuilder();
             while (true) {
-                String subDirectory = new String(remote.substring(start, end).getBytes("UTF-8"), "iso-8859-1");
+                String subDirectory = new String(remote.substring(start, end).getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
                 path = path + "/" + subDirectory;
                 if (!existFile(path)) {
+
                     if (makeDirectory(subDirectory)) {
                         changeWorkingDirectory(subDirectory);
                     } else {
@@ -199,7 +202,7 @@ public class FTPUtils {
                     changeWorkingDirectory(subDirectory);
                 }
 
-                paths = paths + "/" + subDirectory;
+                paths.append("/").append(subDirectory);
                 start = end + 1;
                 end = directory.indexOf("/", start);
                 // 检查所有目录是否创建完毕
@@ -214,6 +217,7 @@ public class FTPUtils {
     //判断ftp服务器文件是否存在
     public static boolean existFile(String path) throws IOException {
         boolean flag = false;
+        ftpClient.enterLocalPassiveMode();
         FTPFile[] ftpFileArr = ftpClient.listFiles(path);
         if (ftpFileArr.length > 0) {
             flag = true;
